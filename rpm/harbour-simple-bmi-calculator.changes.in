@@ -12,6 +12,9 @@
 # * date Author's Name <author's email> version-release
 # - Summary of changes
 
-* Sat Nov 30 2019 Adel Noureddine 0.0.1-1
+* Sat Nov 30 2019 Adel Noureddine 0.1-1
 - Initial release
+
+* Tue Dec 03 2019 Adel Noureddine 0.2-1
+- Use slides instead of text fields
 

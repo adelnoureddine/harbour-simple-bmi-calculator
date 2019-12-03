@@ -9,7 +9,7 @@ Name:       harbour-simple-bmi-calculator
 # << macros
 
 Summary:    Simple BMI Calculator
-Version:    0.1
+Version:    0.2
 Release:    1
 Group:      Qt/Qt
 License:    LICENSE

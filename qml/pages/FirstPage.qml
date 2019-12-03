@@ -16,29 +16,20 @@ Page {
     property double height_square: 0.0;
 
     function calculate() {
-        if ((weightField.text === "") || (heightField.text === "")) {
-            bmi = 0.0
-            height_square = 0.0
-            category_bmi = ""
-            category_bmi_description  = ""
-            recommended_weight_description = ""
-            bmi_text = ""
-        } else {
-            weight_bmi = weightField.text
-            height_bmi = heightField.text / 100
+        weight_bmi = weightField.value
+        height_bmi = heightField.value / 100
 
-            height_square = (height_bmi * height_bmi)
+        height_square = (height_bmi * height_bmi)
 
-            if ((weight_bmi > 0) && (height_bmi > 0)) {
-                bmi = weight_bmi / height_square;
-                recommended_min_weight = 18.5 * height_square
-                recommended_max_weight = 24.9 * height_square
-                recommended_weight_description = "The recommended weight for your height is between " + recommended_min_weight.toFixed(2) + " kg and " + recommended_max_weight.toFixed(2) + " kg"
-                calculate_bmi_category();
-            }
-
-            bmi_text = "Your BMI is: " + bmi.toFixed(2);
+        if ((weight_bmi > 0) && (height_bmi > 0)) {
+            bmi = weight_bmi / height_square;
+            recommended_min_weight = 18.5 * height_square
+            recommended_max_weight = 24.9 * height_square
+            recommended_weight_description = "The recommended weight for your height is between " + recommended_min_weight.toFixed(2) + " kg and " + recommended_max_weight.toFixed(2) + " kg"
+            calculate_bmi_category();
         }
+
+        bmi_text = "Your BMI is: " + bmi.toFixed(2);
     }
 
     function calculate_bmi_category() {
@@ -102,7 +93,7 @@ Page {
             }
 
             // Height in cm
-            TextField {
+            /*TextField {
                 id: heightField
                 width: page.width
                 label: "Your height (in cm)"
@@ -111,10 +102,36 @@ Page {
                 color: Theme.primaryColor
                 inputMethodHints: Qt.ImhDigitsOnly
                 EnterKey.enabled: text.length > 0
+            }*/
+
+            // Height in cm
+            Slider {
+                id: heightField// Height in cm
+                width: page.width
+                minimumValue: 100
+                maximumValue: 220
+                value: 170
+                valueText: value + " cm"
+                stepSize: 1
+                label: "Height"
+                onValueChanged: calculate()
             }
 
             // Weight in kg
-            TextField {
+            Slider {
+                id: weightField
+                width: page.width
+                minimumValue: 40
+                maximumValue: 150
+                value: 70
+                valueText: value + " kg"
+                stepSize: 1
+                label: "Weight"
+                onValueChanged: calculate()
+            }
+
+            // Weight in kg
+            /*TextField {
                 id: weightField
                 width: page.width
                 label: "Your weight (in kg)"
@@ -123,14 +140,7 @@ Page {
                 color: Theme.primaryColor
                 inputMethodHints: Qt.ImhDigitsOnly
                 EnterKey.enabled: text.length > 0
-            }
-
-            Button {
-                id: calculationButton
-                text: "Calculate BMI"
-                anchors.horizontalCenter: parent.horizontalCenter
-                onClicked:calculate()
-            }
+            }*/
 
             // BMI value
             Label {
@@ -172,6 +182,8 @@ Page {
                     horizontalCenter: parent.horizontalCenter
                 }
             }
+
+            Component.onCompleted: calculate()
         }
     }
 
