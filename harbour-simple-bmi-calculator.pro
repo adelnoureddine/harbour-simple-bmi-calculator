@@ -19,8 +19,8 @@ SOURCES += src/harbour-simple-bmi-calculator.cpp
 DISTFILES += qml/harbour-simple-bmi-calculator.qml \
     LICENSE \
     qml/cover/CoverPage.qml \
-    qml/pages/FirstPage.qml \
-    qml/pages/SecondPage.qml \
+    qml/pages/AboutPage.qml \
+    qml/pages/MainPage.qml \
     rpm/harbour-simple-bmi-calculator.changes.in \
     rpm/harbour-simple-bmi-calculator.changes.run.in \
     rpm/harbour-simple-bmi-calculator.spec \

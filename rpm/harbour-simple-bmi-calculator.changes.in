@@ -18,3 +18,8 @@
 * Tue Dec 03 2019 Adel Noureddine 0.2-1
 - Use slides instead of text fields
 
+* Thu Mar 31 2022 Adel Noureddine 0.3-1
+- Support SailJail
+- Add icons for each BMI category
+- Update link for source code
+- Update application icon
