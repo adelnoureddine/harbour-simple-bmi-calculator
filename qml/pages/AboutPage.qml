@@ -1,99 +1,151 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import "../components"
 
 Page {
     id: page
 
-    // The effective value will be restricted by ApplicationWindow.allowedOrientations
     allowedOrientations: Orientation.All
+
+    readonly property string sourceUrl: "https://github.com/adelnoureddine/harbour-simple-bmi-calculator"
+    readonly property string licenseUrl: "https://www.gnu.org/licenses/gpl-3.0.html"
+    // Set by the C++ launcher. Undefined when the page is loaded without it (qmlscene).
+    readonly property string version: typeof appVersion !== "undefined" ? String(appVersion) : ""
+    readonly property real contentWidth: Math.min(width, Screen.width)
 
     SilicaFlickable {
         anchors.fill: parent
+        contentHeight: column.height + Theme.paddingLarge
 
         Column {
             id: column
 
-            width: page.width
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: page.contentWidth
             spacing: Theme.paddingLarge
 
-            Label {
-                text: "Simple BMI Calculator"
-                horizontalAlignment: Text.AlignHCenter
-                font.pixelSize: Theme.fontSizeExtraLarge
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
+            PageHeader {
+                title: qsTr("About")
+            }
+
+            // The app icon, name and version.
+            Column {
+                width: parent.width
+                spacing: Theme.paddingSmall
+
+                Image {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    width: Theme.iconSizeExtraLarge
+                    height: width
+                    sourceSize.width: width
+                    sourceSize.height: height
+                    fillMode: Image.PreserveAspectFit
+                    // The launcher icon installed with the app (SAILFISHAPP_ICONS).
+                    source: "/usr/share/icons/hicolor/172x172/apps/harbour-simple-bmi-calculator.png"
+                }
+
+                Label {
+                    width: parent.width
+                    horizontalAlignment: Text.AlignHCenter
+                    wrapMode: Text.Wrap
+                    //: The app's full name
+                    text: qsTr("Simple BMI Calculator")
+                    font.pixelSize: Theme.fontSizeExtraLarge
+                    color: Theme.primaryColor
+                }
+
+                Label {
+                    width: parent.width
+                    horizontalAlignment: Text.AlignHCenter
+                    visible: page.version !== ""
+                    text: qsTr("Version %1").arg(page.version)
+                    font.pixelSize: Theme.fontSizeSmall
+                    color: Theme.secondaryHighlightColor
+                }
+
+                Item { width: 1; height: Theme.paddingMedium }
+
+                Label {
+                    x: Theme.horizontalPageMargin
+                    width: parent.width - 2 * Theme.horizontalPageMargin
+                    wrapMode: Text.Wrap
+                    horizontalAlignment: Text.AlignHCenter
+                    text: qsTr("Your body mass index and what it means, from your height and weight.")
+                    font.pixelSize: Theme.fontSizeSmall
+                    color: Theme.secondaryColor
                 }
             }
 
-            Label {
-                wrapMode: Text.Wrap
-                x: Theme.horizontalPageMargin
-                width: parent.width - ( 2 * Theme.horizontalPageMargin )
-                horizontalAlignment: Text.AlignHCenter
-                text: qsTr("A Simple BMI Calculator")
-                font.pixelSize: Theme.fontSizeSmall
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
+            Card {
+                Label {
+                    width: parent.width
+                    wrapMode: Text.Wrap
+                    text: qsTr("Author and maintainer")
+                    font.pixelSize: Theme.fontSizeSmall
+                    color: Theme.secondaryHighlightColor
+                }
+
+                Label {
+                    width: parent.width
+                    wrapMode: Text.Wrap
+                    text: "Adel Noureddine © 2019-2026"
+                    font.pixelSize: Theme.fontSizeSmall
+                    color: Theme.primaryColor
                 }
             }
 
-            Label {
-                text: qsTr("Author: Adel Noureddine © 2019-2022")
-                font.pixelSize: Theme.fontSizeSmall
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                }
+            SectionHeader {
+                text: qsTr("Source code")
             }
 
-            Label {
-                text: qsTr("Licensed under GNU GPL v3")
-                font.pixelSize: Theme.fontSizeSmall
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
+            Column {
+                width: parent.width
+                spacing: Theme.paddingMedium
+
+                LinkRow {
+                    title: qsTr("View source code")
+                    detail: page.sourceUrl.replace("https://", "")
+                    url: page.sourceUrl
+                    icon: "image://theme/icon-m-developer-mode"
                 }
-            }
 
-            Icon {
-                 source: "image://theme/icon-s-cloud-download"
-                 anchors {
-                     horizontalCenter: parent.horizontalCenter
-                 }
-             }
-
-            Text {
-                text: "<a href=\"https://gitlab.com/adelnoureddine/harbour-simple-bmi-calculator\">" + qsTr("View source code on GitLab") + "</a>"
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
+                LinkRow {
+                    //: Link to the text of the app's software license
+                    title: qsTr("License")
+                    detail: qsTr("Licensed under the GNU GPL 3 license only (GPL-3.0-only)")
+                    url: page.licenseUrl
+                    icon: "image://theme/icon-m-document"
                 }
-                font.pixelSize: Theme.fontSizeSmall
-                linkColor: Theme.highlightColor
-
-                onLinkActivated: Qt.openUrlExternally("https://gitlab.com/adelnoureddine/harbour-simple-bmi-calculator")
             }
 
             SectionHeader {
                 text: qsTr("Health sources")
             }
 
-            LinkedLabel {
-                x: Theme.horizontalPageMargin
-                text: "<a href=\"http://www.euro.who.int/en/health-topics/disease-prevention/nutrition/a-healthy-lifestyle/body-mass-index-bmi\">World Heath Organisation Europe</a>"
-                font.pixelSize: Theme.fontSizeSmall
-                linkColor: Theme.highlightColor
-                width: parent.width - 2*x
+            Column {
+                width: parent.width
+                spacing: Theme.paddingMedium
 
-                onLinkActivated: Qt.openUrlExternally("http://www.euro.who.int/en/health-topics/disease-prevention/nutrition/a-healthy-lifestyle/body-mass-index-bmi")
-            }
+                LinkRow {
+                    title: qsTr("World Health Organization")
+                    //: Title of the WHO page linked from the About page
+                    detail: qsTr("Obesity and overweight")
+                    url: "https://www.who.int/news-room/fact-sheets/detail/obesity-and-overweight"
+                    icon: "image://theme/icon-m-health"
+                }
 
-            LinkedLabel {
-                x: Theme.horizontalPageMargin
-                text: "<a href=\"https://www.cdc.gov/healthyweight/assessing/bmi/adult_bmi/metric_bmi_calculator/bmi_calculator.html\">Centers for Disease Control and Prevention (USA)</a>"
-                font.pixelSize: Theme.fontSizeSmall
-                linkColor: Theme.highlightColor
-                width: parent.width - 2*x
-
-                onLinkActivated: Qt.openUrlExternally("https://www.cdc.gov/healthyweight/assessing/bmi/adult_bmi/metric_bmi_calculator/bmi_calculator.html")
+                LinkRow {
+                    title: qsTr("Centers for Disease Control and Prevention (USA)")
+                    //: Title of the CDC page linked from the About page
+                    detail: qsTr("Adult BMI categories")
+                    url: "https://www.cdc.gov/bmi/adult-calculator/bmi-categories.html"
+                    icon: "image://theme/icon-m-health"
+                }
             }
         }
+
+        VerticalScrollDecorator {}
     }
 }
+
+// vim:et:ts=4:sw=4

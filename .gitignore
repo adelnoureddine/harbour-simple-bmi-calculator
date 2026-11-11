@@ -41,3 +41,10 @@ target_wrapper.*
 
 # QtCreator CMake
 CMakeLists.txt.user*
+
+# Built packages
+RPMS/
+# Written by qmake when the build runs in the source folder
+/version.h
+
+.vscode/

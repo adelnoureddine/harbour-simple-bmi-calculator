@@ -1,0 +1,30 @@
+# Changelog of the package, included in the RPM. Newest entries first, separated by a
+# blank line:
+#
+# * date Author's Name <author's email> version-release
+# - Summary of changes
+
+* Wed Nov 11 2026 Adel Noureddine 1.0-1
+- Redesigned interface in the style of Health: result card, coloured category, and a
+  scale showing where the BMI falls.
+- Height and weight can be typed exactly as well as set with the sliders, with wider
+  ranges (weights above 150 kg).
+- The cover shows the BMI and its category.
+- Numbers in the phone's format.
+- Fixed: a BMI right at a limit could be put in the category below (160 cm and 64 kg
+  showed "Normal weight"), and the value shown could disagree with its category.
+- Fixed: the category icons could be missing on phones without the Weather app.
+- Fixed: the About page could not scroll, and its links were out of date.
+- French translation.
+
+* Mon Apr 04 2022 Adel Noureddine 0.3-1
+- Support SailJail
+- Add icons for each BMI category
+- Update link for source code
+- Update application icon
+
+* Tue Dec 03 2019 Adel Noureddine 0.2-1
+- Use sliders instead of text fields
+
+* Sat Nov 30 2019 Adel Noureddine 0.1-1
+- Initial release

@@ -4,8 +4,11 @@ X-Nemo-Application-Type=silica-qt5
 Icon=harbour-simple-bmi-calculator
 Exec=harbour-simple-bmi-calculator
 Name=Simple BMI Calculator
+Name[fr]=Calcul d'IMC
+Comment=Your body mass index from your height and weight
+Comment[fr]=Votre indice de masse corporelle selon votre taille et votre poids
 
 [X-Sailjail]
-Permissions=
 OrganizationName=org.noureddine
 ApplicationName=SimpleBMICalculator
+Permissions=

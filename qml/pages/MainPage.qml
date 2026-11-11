@@ -1,207 +1,174 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import "../components"
+import "../js/bmi.js" as Bmi
 
+/*
+ * The calculator: height and weight, and the BMI with its category, which follows both
+ * as they change.
+ */
 Page {
     id: page
 
-    property double bmi: 0.0;
-    property string bmi_text;
-    property double height_bmi: 0.0;
-    property double weight_bmi: 0.0;
-    property double recommended_min_weight: 0.0;
-    property double recommended_max_weight: 0.0;
-    property string category_bmi;
-    property string category_bmi_icon;
-    property string category_bmi_description;
-    property string recommended_weight_description;
-    property double height_square: 0.0;
-
-    function calculate() {
-        weight_bmi = weightField.value
-        height_bmi = heightField.value / 100
-
-        height_square = (height_bmi * height_bmi)
-
-        if ((weight_bmi > 0) && (height_bmi > 0)) {
-            bmi = weight_bmi / height_square;
-            recommended_min_weight = 18.5 * height_square
-            recommended_max_weight = 24.9 * height_square
-            recommended_weight_description = "The recommended weight for your height is between " + recommended_min_weight.toFixed(2) + " kg and " + recommended_max_weight.toFixed(2) + " kg"
-            calculate_bmi_category();
-        }
-
-        bmi_text = "Your BMI is: " + bmi.toFixed(2);
-    }
-
-    function calculate_bmi_category() {
-        if (bmi < 18.5) {
-            category_bmi = "Underweight";
-            category_bmi_description = "Your weight is under the recommended values. Talk to your doctor for medical advice."
-            category_bmi_icon = "image://theme/icon-l-weather-n211-light"
-        } else if (bmi < 25) {
-            category_bmi = "Normal weight";
-            category_bmi_description = "Your weight is in the normal category for adults of your height."
-            category_bmi_icon = "image://theme/icon-l-weather-d000-light"
-        } else if (bmi < 30) {
-            category_bmi = "Overweight (pre-obesity)";
-            category_bmi_description = "Your weight is above the recommended values. Talk to your doctor for medical advice."
-            category_bmi_icon = "image://theme/icon-l-weather-d210-light"
-        } else if (bmi < 35) {
-            category_bmi = "Obese Class I";
-            category_bmi_description = "Your weight is high above the recommended values. People who are overweight or obese are at higher risk for chronic conditions such as high blood pressure, diabetes, and high cholesterol. Talk to your doctor for medical advice."
-            category_bmi_icon = "image://theme/icon-l-weather-d220-light"
-        } else if (bmi < 40) {
-            category_bmi = "Obese Class II";
-            category_bmi_description = "Your weight is high above the recommended values. People who are overweight or obese are at higher risk for chronic conditions such as high blood pressure, diabetes, and high cholesterol. Talk to your doctor for medical advice."
-            category_bmi_icon = "image://theme/icon-l-weather-d221-light"
-        } else if (bmi >= 40) {
-            category_bmi = "Obese Class III";
-            category_bmi_description = "Your weight is high above the recommended values. People who are overweight or obese are at higher risk for chronic conditions such as high blood pressure, diabetes, and high cholesterol. Talk to your doctor for medical advice."
-            category_bmi_icon = "image://theme/icon-l-weather-d431-light"
-        } else {
-            category_bmi = "Unkown category";
-            category_bmi_description = ""
-            category_bmi_icon = "image://theme/icon-l-clear"
-        }
-    }
-
-    // The effective value will be restricted by ApplicationWindow.allowedOrientations
     allowedOrientations: Orientation.All
 
-    // To enable PullDownMenu, place our content in a SilicaFlickable
+    // Lines stay a readable length in landscape and on tablets.
+    readonly property real contentWidth: Math.min(width, Screen.width)
+    readonly property var healthy: Bmi.healthyRange(appWindow.heightCm)
+
     SilicaFlickable {
         anchors.fill: parent
+        contentHeight: column.height + Theme.paddingLarge
 
-        // PullDownMenu and PushUpMenu must be declared in SilicaFlickable, SilicaListView or SilicaGridView
         PullDownMenu {
             MenuItem {
                 text: qsTr("About")
-                onClicked: pageStack.push(Qt.resolvedUrl("AboutPage.qml"))
+                onClicked: pageStack.animatorPush(Qt.resolvedUrl("AboutPage.qml"))
             }
         }
 
-        // Tell SilicaFlickable the height of its content.
-        contentHeight: column.height
-
-        // Place our content in a Column.  The PageHeader is always placed at the top
-        // of the page, followed by our content.
         Column {
             id: column
 
-            width: page.width
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: page.contentWidth
             spacing: Theme.paddingLarge
+
             PageHeader {
-                title: qsTr("Simple BMI Calculator")
+                //: The app's name, as the page title
+                title: qsTr("BMI Calculator")
+                description: qsTr("For adults")
             }
 
-            LinkedLabel {
-                x: Theme.horizontalPageMargin
-                width: parent.width - 2*x
-                plainText: "Simple BMI Calculator for Adults"
-            }
+            Column {
+                width: parent.width
 
-            // Height in cm
-            /*TextField {
-                id: heightField
-                width: page.width
-                label: "Your height (in cm)"
-                placeholderText: "Your height (in cm)"
-                validator: RegExpValidator { regExp: /^[0-9]{1,3}$/ }
-                color: Theme.primaryColor
-                inputMethodHints: Qt.ImhDigitsOnly
-                EnterKey.enabled: text.length > 0
-            }*/
+                ValueSlider {
+                    label: qsTr("Height")
+                    //: Unit: centimetres
+                    unit: qsTr("cm")
+                    value: appWindow.heightCm
+                    sliderMinimum: 100
+                    sliderMaximum: 220
+                    stepSize: 1
+                    minimum: 50
+                    maximum: 250
+                    onValueChanged: appWindow.heightCm = value
+                }
 
-            // Height in cm
-            Slider {
-                id: heightField// Height in cm
-                width: page.width
-                minimumValue: 100
-                maximumValue: 220
-                value: 170
-                valueText: value + " cm"
-                stepSize: 1
-                label: "Height"
-                onValueChanged: calculate()
-            }
-
-            // Weight in kg
-            Slider {
-                id: weightField
-                width: page.width
-                minimumValue: 40
-                maximumValue: 150
-                value: 70
-                valueText: value + " kg"
-                stepSize: 1
-                label: "Weight"
-                onValueChanged: calculate()
-            }
-
-            // Weight in kg
-            /*TextField {
-                id: weightField
-                width: page.width
-                label: "Your weight (in kg)"
-                placeholderText: "Your weight (in kg)"
-                validator: RegExpValidator { regExp: /^(\d{1,3})([\.|,]\d{1,2})?$/}
-                color: Theme.primaryColor
-                inputMethodHints: Qt.ImhDigitsOnly
-                EnterKey.enabled: text.length > 0
-            }*/
-
-            // BMI value
-            Label {
-                text: bmi_text
-                color: Theme.highlightColor
-                font.pixelSize: Theme.fontSizeLarge
-                anchors.left: parent.left
-                anchors.leftMargin: 30
-            }
-
-            Icon {
-                 source: category_bmi_icon
-                 anchors {
-                     horizontalCenter: parent.horizontalCenter
-                 }
-             }
-
-            // BMI category
-            LinkedLabel {
-                x: Theme.horizontalPageMargin
-                width: parent.width - 2*x
-                plainText: category_bmi
-            }
-
-            // Recommended weight
-            LinkedLabel {
-                x: Theme.horizontalPageMargin
-                width: parent.width - 2*x
-                plainText: recommended_weight_description
-            }
-
-            // BMI category description
-            LinkedLabel {
-                x: Theme.horizontalPageMargin
-                width: parent.width - 2*x
-                plainText: category_bmi_description
-            }
-
-            Label {
-                id: separatorLabel
-                x: Theme.horizontalPageMargin
-                width: parent.width  - ( 2 * Theme.horizontalPageMargin )
-                font.pixelSize: Theme.fontSizeExtraSmall
-                wrapMode: Text.Wrap
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
+                ValueSlider {
+                    label: qsTr("Weight")
+                    //: Unit: kilograms
+                    unit: qsTr("kg")
+                    value: appWindow.weightKg
+                    sliderMinimum: 30
+                    sliderMaximum: 200
+                    stepSize: 0.5
+                    minimum: 20
+                    maximum: 350
+                    onValueChanged: appWindow.weightKg = value
                 }
             }
 
-            Component.onCompleted: calculate()
+            Card {
+                spacing: Theme.paddingMedium
+
+                Column {
+                    width: parent.width
+
+                    Label {
+                        width: parent.width
+                        text: qsTr("Your BMI")
+                        font.pixelSize: Theme.fontSizeSmall
+                        color: Theme.secondaryHighlightColor
+                    }
+
+                    Row {
+                        spacing: Theme.paddingSmall
+
+                        Label {
+                            id: bmiLabel
+                            text: appWindow.bmi === null ? "—" : appWindow.formatNumber(appWindow.bmi, 1)
+                            font.pixelSize: Theme.fontSizeHuge
+                            color: Theme.primaryColor
+                        }
+                        Label {
+                            anchors.baseline: bmiLabel.baseline
+                            //: Unit of the BMI: kilograms per square metre
+                            text: qsTr("kg/m²")
+                            font.pixelSize: Theme.fontSizeSmall
+                            color: Theme.secondaryColor
+                        }
+                    }
+                }
+
+                StatusPill {
+                    text: appWindow.categoryName
+                    dotColor: appWindow.categoryColor
+                    maximumWidth: parent.width
+                }
+
+                BmiScale {
+                    bmi: appWindow.bmi
+                }
+
+                Column {
+                    width: parent.width
+                    visible: page.healthy !== null
+
+                    Label {
+                        width: parent.width
+                        wrapMode: Text.Wrap
+                        text: qsTr("Healthy weight for your height")
+                        font.pixelSize: Theme.fontSizeSmall
+                        color: Theme.secondaryColor
+                    }
+                    Label {
+                        width: parent.width
+                        wrapMode: Text.Wrap
+                        //: %1 and %2 are weights in kilograms, with one decimal
+                        text: page.healthy === null ? ""
+                              : qsTr("%1 to %2 kg")
+                                .arg(appWindow.formatNumber(page.healthy.min, 1))
+                                .arg(appWindow.formatNumber(page.healthy.max, 1))
+                        font.pixelSize: Theme.fontSizeMedium
+                        color: Theme.primaryColor
+                    }
+                }
+            }
+
+            Card {
+                visible: appWindow.category >= 0
+
+                Label {
+                    width: parent.width
+                    wrapMode: Text.Wrap
+                    text: appWindow.categoryName
+                    font.pixelSize: Theme.fontSizeSmall
+                    color: Theme.secondaryHighlightColor
+                }
+
+                Label {
+                    width: parent.width
+                    wrapMode: Text.Wrap
+                    text: appWindow.categoryDescription(appWindow.category)
+                    font.pixelSize: Theme.fontSizeSmall
+                    color: Theme.primaryColor
+                }
+            }
+
+            Label {
+                x: Theme.horizontalPageMargin
+                width: parent.width - 2 * Theme.horizontalPageMargin
+                wrapMode: Text.Wrap
+                text: qsTr("The BMI is a screening measure for adults: it does not tell fat from muscle, and is not medical advice.")
+                font.pixelSize: Theme.fontSizeExtraSmall
+                color: Theme.secondaryColor
+            }
         }
+
+        VerticalScrollDecorator {}
     }
-
-    // Functions
-
 }
+
+// vim:et:ts=4:sw=4
